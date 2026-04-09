@@ -1,1 +1,101 @@
-Employee Well-being & Biometric Emotion Recognition SystemPakka Limited Internship ProjectProject AimThe primary objective of this project is to transform the standard attendance process into a proactive mental health monitoring tool. By leveraging Deep Learning and Computer Vision, the system analyzes the emotional state of employees during daily photo-based attendance. The goal is to detect long-term emotional trends—specifically identifying if an employee exhibits persistent "sad," "stressed," or "depressed" states for 15 consecutive workdays. This data acts as an early warning system, allowing the company to facilitate timely interventions with psychological consultants or therapists to support employee well-being.Key FeaturesReal-Time Macro-Emotion Classification: Categorizes facial expressions into seven universal states: Happiness, Sadness, Disgust, Fear, Surprise, Anger, and Neutral.Micro-Expression Analysis: Utilizes 52 distinct facial blendshapes to identify subtle markers of distress, such as the browInnerUp parameter (inner eyebrow raise).Biometric Heart Rate Tracking (rPPG): Employs Remote Photoplethysmography to detect microscopic skin brightness changes, calculating Beats Per Minute (BPM) as a physiological stress indicator.15-Day Longitudinal Tracking: A data-logging module that monitors emotional consistency over a rolling two-week window to trigger mental health alerts.Futuristic HUD Interface: A sci-fi-inspired dashboard providing "Detailed Noticed Things" using a neon-glow aesthetic for clinical review.Technical ArchitectureThe system follows a rigorous computer vision pipeline to ensure accuracy and real-time performance:1. Image Acquisition & PreprocessingGrayscale Conversion: Frames are converted to grayscale to reduce data load by a factor of three while preserving structural contrast.Normalization: Raw pixel values ($0-255$) are scaled to a range of $0.0$ to $1.0$ to ensure mathematical stability during neural network inference.ROI Extraction: The face is isolated and resized to a standard $48 \times 48$ pixel Region of Interest (ROI).2. Deep Learning EngineCNN Model: The core logic utilizes a Convolutional Neural Network (CNN), specifically an ensemble approach fine-tuned on the FER2013 and CK+ datasets for high real-world resilience.ResNet-50 Architecture: Employs Residual Networks to prevent vanishing gradients, ensuring deep feature extraction of facial nuances.Face Mesh: MediaPipe Face Landmarker tracks 478 3D landmarks for pixel-perfect accuracy of facial movements.3. Frontend & VisualizationFramework: Built using Streamlit for rapid prototyping and integrated with WebSockets to maintain a fluid 30 FPS video feed.Visual Enhancements: Uses mplcyberpunk for glowing data charts and cv2.addWeighted for alpha-blended "bloom" effects on tracking graphics.Tech StackCategoryTechnologyLanguagePython 3.9+ Computer VisionOpenCV & MediaPipe Deep LearningTensorFlow 2.x & Keras Web InterfaceStreamlit & streamlit-webrtc Data AnalysisPandas & NumPy Logic Flow for InterventionDaily Capture: Employee takes a photo for attendance.Inference: System calculates emotion probabilities (e.g., Sadness: 85%).Blendshape Validation: System checks if browInnerUp or mouthFrown markers are active.Trend Analysis: If the dominant emotion is "Sad" or "Stress-correlated" (Fear/High BPM) for $\ge 15$ days, a flag is generated.Intervention: A private report is sent to the designated psychological consultant for review.Ethical Considerations & PrivacyData Masking: Only emotional metadata and physiological trends are stored for long-term tracking; raw images are processed in volatile memory.Consent: This system is designed as an opt-in wellness benefit for employees of Pakka Limited.
+To make your README professional and visually engaging for your internship at Pakka Limited, you can use Markdown formatting like headers, badges, tables, and emojis.
+
+Copy and paste the following code into a file named `README.md`:
+
+-----
+
+# 🧠 Sentimental Attendance & Well-being System
+
+### *An AI-Driven Emotional Health Initiative for Pakka Limited*
+
+-----
+
+## 🎯 Project Aim
+
+Standard attendance systems only track *when* an employee arrives. This project aims to track *how* an employee arrives. By integrating deep learning emotion recognition into the photo-based attendance system, we aim to:
+
+1.  **Identify Silent Struggles:** Automatically detect persistent negative emotional states.
+2.  **Data-Driven Compassion:** Monitor trends over a **15-day consecutive window**.
+3.  **Proactive Intervention:** Trigger alerts for psychological consultation or therapy when an employee shows consistent signs of sadness, stress, or depression.
+
+-----
+
+## 🚀 Key Features
+
+  * **Facial Emotion Recognition (FER):** Real-time classification of 7 basic emotions.
+  * **Micro-Expression Tracking:** Analyzing 52 facial blendshapes (e.g., brow raising, lip tightening) for deeper stress analysis.
+  * **Physiological Stress Detection:** Remote heart-rate monitoring (rPPG) via camera to detect anxiety.
+  * **The 15-Day Trigger:** A logic-gated system that flags cases where "Sad/Depressed" scores remain high for 15 straight workdays.
+  * **Cyberpunk UI:** A futuristic dashboard designed for consultants to visualize emotional trajectories.
+
+-----
+
+## 🛠 Tech Stack
+
+| Component | Technology Used |
+| :--- | :--- |
+| **Back-end Logic** | Python 3.9 |
+| **Deep Learning** | ResNet-50 / Keras |
+| **Computer Vision** | OpenCV & MediaPipe |
+| **Front-end UI** | Streamlit |
+| **Data Viz** | Matplotlib & Mplcyberpunk |
+| **Datasets** | FER2013 & CK+ |
+
+-----
+
+## 📐 System Architecture
+
+### 1\. Image Processing
+
+The system captures the attendance photo, converts it to **Grayscale**, and performs **Normalization** (scaling pixels to 0-1) to ensure the model focuses on structural features rather than lighting.
+
+### 2\. The Recognition Pipeline
+
+  * **Face Detection:** Uses MediaPipe to isolate the Face ROI (Region of Interest).
+  * **Feature Extraction:** A CNN (Convolutional Neural Network) identifies key emotional markers.
+  * **Trend Analysis:** Daily outputs are stored in a secure database to monitor the 15-day emotional moving average.
+
+-----
+
+## 📋 Logic Flow for Intervention
+
+```mermaid
+graph TD
+    A[Employee Takes Photo] --> B[Emotion & Stress Analysis]
+    B --> C{Sad/Stressed?}
+    C -- No --> D[Mark Attendance]
+    C -- Yes --> E[Log Data Point]
+    E --> F{15 Days Consecutive?}
+    F -- No --> D
+    F -- Yes --> G[Alert Psychological Consultant]
+    G --> H[Proactive Therapy Offer]
+```
+
+-----
+
+## 🛠 Installation & Usage
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-repo/pakka-emotion-system.git
+    ```
+2.  **Install dependencies:**
+    ```bash
+    pip install tensorflow opencv-python mediapipe streamlit pandas
+    ```
+3.  **Run the application:**
+    ```bash
+    streamlit run app.py
+    ```
+
+-----
+
+## 🛡 Ethical Considerations
+
+  * **Privacy First:** Raw images are processed in real-time and not stored; only the numerical "Emotion Score" is logged for trend analysis.
+  * **Supportive, Not Punitive:** This data is strictly for mental health support and is never used for performance evaluation.
+
+-----
+
+**Developed during internship at Pakka Limited.**
+*Focusing on the intersection of AI and Employee Well-being.*
