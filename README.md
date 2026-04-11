@@ -99,3 +99,9 @@ graph TD
 
 **Developed during internship at Pakka Limited.**
 *Focusing on the intersection of AI and Employee Well-being.*
+
+
+to run -
+1-download the file ,extract everything .
+2-then add emotion_model.h5  and  venv  present in emotions 2 folder .
+3-run streamlit run app.py
