@@ -1,5 +1,13 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, RTCConfiguration
+# --- MONKEYPATCH for streamlit-webrtc + Tornado 6.3+ compatibility ---
+try:
+    import tornado.platform.asyncio
+    if not hasattr(tornado.platform.asyncio, "BaseAsyncIOLoop"):
+        tornado.platform.asyncio.BaseAsyncIOLoop = object
+except ImportError:
+    pass
+
+from streamlit_webrtc import webrtc_streamer, RTCConfiguration
 import av, cv2, os, time, pandas as pd, numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
