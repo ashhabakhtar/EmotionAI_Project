@@ -96,7 +96,14 @@ with col_v:
         webrtc_streamer(
             key="pro-stream",
             video_processor_factory=ProProcessor,
-            rtc_configuration=RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}),
+            rtc_configuration=RTCConfiguration(
+                {"iceServers": [
+                    {"urls": ["stun:stun.l.google.com:19302"]},
+                    {"urls": ["stun:stun1.l.google.com:19302"]},
+                    {"urls": ["stun:stun2.l.google.com:19302"]},
+                    {"urls": ["stun:global.stun.twilio.com:3478"]}
+                ]}
+            ),
             media_stream_constraints={"video": True, "audio": False},
         )
 
