@@ -53,35 +53,41 @@ st.markdown("""
 # --- 2. ENGINE ---
 @st.cache_resource
 def load_engine():
-    # Fallback to building if h5 missing (change path if yours is named differently)
     return load_model('emotion_model.h5')
 
 model = load_engine()
 init_biometric_log()
 
-class ProProcessor(VideoProcessorBase):
-    def __init__(self): self.last_log_time = 0
-    def recv(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-        h, w, _ = img.shape
-        results = get_face_mesh_results(img)
-        if results.multi_face_landmarks:
-            for landmarks in results.multi_face_landmarks:
-                coords = [(lm.x * w, lm.y * h) for lm in landmarks.landmark]
-                x_min, y_min = int(min(coords, key=lambda p: p[0])[0]), int(min(coords, key=lambda p: p[1])[1])
-                x_max, y_max = int(max(coords, key=lambda p: p[0])[0]), int(max(coords, key=lambda p: p[1])[1])
-                bbox = (x_min, y_min, x_max - x_min, y_max - y_min)
-                au = calculate_au_extended(landmarks, w, h)
-                face_roi = preprocess_face(img, bbox)
-                if face_roi is not None:
-                    preds = model.predict(face_roi, verbose=0)[0]
-                    emo = "Happy" if au['Smile'] > 4.2 else EMOTIONS[np.argmax(preds)]
-                    conf = float(preds[np.argmax(preds)])
-                    if time.time() - self.last_log_time > 1.5:
-                        log_to_csv(emo, conf, au)
-                        self.last_log_time = time.time()
-                    draw_clean_hud(img, bbox, emo, conf)
-        return av.VideoFrame.from_ndarray(img, format="bgr24")
+# Use a closure or session state for tracking log time in the new callback API
+if "last_log_time" not in st.session_state:
+    st.session_state.last_log_time = 0
+
+def video_frame_callback(frame):
+    img = frame.to_ndarray(format="bgr24")
+    h, w, _ = img.shape
+    results = get_face_mesh_results(img)
+    if results.multi_face_landmarks:
+        for landmarks in results.multi_face_landmarks:
+            coords = [(lm.x * w, lm.y * h) for lm in landmarks.landmark]
+            x_min, y_min = int(min(coords, key=lambda p: p[0])[0]), int(min(coords, key=lambda p: p[1])[1])
+            x_max, y_max = int(max(coords, key=lambda p: p[0])[0]), int(max(coords, key=lambda p: p[1])[1])
+            bbox = (x_min, y_min, x_max - x_min, y_max - y_min)
+            au = calculate_au_extended(landmarks, w, h)
+            face_roi = preprocess_face(img, bbox)
+            if face_roi is not None:
+                preds = model.predict(face_roi, verbose=0)[0]
+                emo = "Happy" if au['Smile'] > 4.2 else EMOTIONS[np.argmax(preds)]
+                conf = float(preds[np.argmax(preds)])
+                
+                # Note: Logging to CSV from a callback on Streamlit Cloud can be tricky, 
+                # but we'll keep the logic for now.
+                import time
+                if time.time() - st.session_state.last_log_time > 1.5:
+                    log_to_csv(emo, conf, au)
+                    st.session_state.last_log_time = time.time()
+                
+                draw_clean_hud(img, bbox, emo, conf)
+    return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 # --- 3. DASHBOARD RENDERING ---
 
@@ -95,7 +101,7 @@ with col_v:
         st.markdown("<div class='panel-header'><span>📸 IMAGE SOURCE / ANALYSIS VISUALISATION</span><span class='stat-tag'>73%</span></div>", unsafe_allow_html=True)
         webrtc_streamer(
             key="pro-stream",
-            video_processor_factory=ProProcessor,
+            video_frame_callback=video_frame_callback,
             rtc_configuration=RTCConfiguration(
                 {"iceServers": [
                     {"urls": ["stun:stun.l.google.com:19302"]},
