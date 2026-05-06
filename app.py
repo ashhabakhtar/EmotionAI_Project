@@ -58,9 +58,9 @@ def load_engine():
 model = load_engine()
 init_biometric_log()
 
-# Use a closure or session state for tracking log time in the new callback API
-if "last_log_time" not in st.session_state:
-    st.session_state.last_log_time = 0
+# Use a simple class or list to hold the last_log_time to avoid ScriptRunContext issues in the callback
+class SessionStateShim:
+    last_log_time = 0
 
 def video_frame_callback(frame):
     img = frame.to_ndarray(format="bgr24")
@@ -79,12 +79,10 @@ def video_frame_callback(frame):
                 emo = "Happy" if au['Smile'] > 4.2 else EMOTIONS[np.argmax(preds)]
                 conf = float(preds[np.argmax(preds)])
                 
-                # Note: Logging to CSV from a callback on Streamlit Cloud can be tricky, 
-                # but we'll keep the logic for now.
                 import time
-                if time.time() - st.session_state.last_log_time > 1.5:
+                if time.time() - SessionStateShim.last_log_time > 1.5:
                     log_to_csv(emo, conf, au)
-                    st.session_state.last_log_time = time.time()
+                    SessionStateShim.last_log_time = time.time()
                 
                 draw_clean_hud(img, bbox, emo, conf)
     return av.VideoFrame.from_ndarray(img, format="bgr24")
