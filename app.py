@@ -119,7 +119,7 @@ with col_i:
                     font_color='#E0E0E0', height=180, margin=dict(l=0, r=0, t=0, b=0),
                     xaxis_visible=False, yaxis_title=None
                 )
-                st.plotly_chart(fig_bar, use_container_width=True, config={'displayModeBar': False})
+                st.plotly_chart(fig_bar, width="stretch", config={'displayModeBar': False})
 
 # BOTTOM ROW: THE PERSISTENCE BOX (Now containing the graph)
 with st.container(border=True):
@@ -146,4 +146,4 @@ with st.container(border=True):
                 yaxis=dict(showgrid=True, gridcolor='#282E33', title="EMOTION SCORE")
             )
             # THIS IS NOW INSIDE THE CONTAINER
-            st.plotly_chart(fig_line, use_container_width=True, config={'displayModeBar': False})
+            st.plotly_chart(fig_line, width="stretch", config={'displayModeBar': False})
