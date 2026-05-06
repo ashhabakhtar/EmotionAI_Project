@@ -4,7 +4,7 @@ import av, cv2, os, time, pandas as pd, numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from tensorflow.keras.models import load_model
-from utils import (preprocess_face, get_face_mesh_results, calculate_au_extended, 
+from bio_utils import (preprocess_face, get_face_mesh_results, calculate_au_extended, 
                    draw_clean_hud, init_biometric_log, log_to_csv, EMOTIONS, LOG_FILE)
 
 # --- 1. THE EXACT UI STYLING (CSS) ---
