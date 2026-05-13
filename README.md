@@ -104,4 +104,4 @@ graph TD
 to run -
 1-download the file ,extract everything .
 2-then add emotion_model.h5  and  venv  present in emotions 2 folder .
-3-run streamlit run app.py
+3-run streamlit run app.py in the terminal.
